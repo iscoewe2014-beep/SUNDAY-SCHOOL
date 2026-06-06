@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Sunday School Dept - VBC Oluwatedo | Bible Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0a1628 0%, #051020 100%);
+      font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .cbt-container {
+      width: 100%;
+      max-width: 1100px;
+      height: 90vh;
+      max-height: 800px;
+      background: #f0f4fa;
+      border-radius: 1.5rem;
+      box-shadow: 0 30px 50px rgba(0, 20, 60, 0.7), 0 0 0 2px #3b7dd8;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #5a9cf0;
+    }
+
+    .church-header {
+      background: #0d2137;
+      background-image: linear-gradient(135deg, #15395a 0%, #0a1a2e 100%);
+      padding: 1rem 2rem;
+      text-align: center;
+      border-bottom: 4px solid #3b7dd8;
+      color: #dce8f5;
+      flex-shrink: 0;
+    }
+
+    .church-badge {
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #5a9cf0;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .church-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #c8ddf8;
+      text-shadow: 2px 2px 0 #040d18;
+      margin: 3px 0;
+      letter-spacing: 1px;
+    }
+
+    .book-reference {
+      font-style: italic;
+      font-size: 1rem;
+      background: rgba(59, 125, 216, 0.18);
+      display: inline-block;
+      padding: 0.2rem 2rem;
+      border-radius: 30px;
+      color: #a3c6f0;
+    }
+
+    .main-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* LEFT PANEL - Question Numbers */
+    .question-nav {
+      width: 300px;
+      min-width: 300px;
+      background: #dce5f2;
+      border-right: 3px solid #3b7dd8;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .nav-header {
+      font-weight: 700;
+      color: #0d2137;
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      text-align: center;
+      background: #3b7dd8;
+      padding: 0.5rem;
+      border-radius: 12px;
+      color: #ffffff;
+    }
+
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+
+    .q-number-btn {
+      aspect-ratio: 1;
+      border: 2px solid #5a8cc0;
+      background: white;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #0d2137;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .q-number-btn:hover {
+      background: #d0dff5;
+      border-color: #2b5fa0;
+      transform: scale(1.05);
+    }
+
+    .q-number-btn.current {
+      background: #0d2137;
+      color: #c8ddf8;
+      border-color: #3b7dd8;
+      box-shadow: 0 0 15px #3b7dd8;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px #3b7dd8; }
+      50% { box-shadow: 0 0 20px #5a9cf0; }
+      100% { box-shadow: 0 0 10px #3b7dd8; }
+    }
+
+    .q-number-btn.answered-correct {
+      background: #1b6b2e;
+      color: white;
+      border-color: #145222;
+      box-shadow: 0 0 8px rgba(27, 107, 46, 0.5);
+    }
+
+    .q-number-btn.answered-wrong {
+      background: #a82828;
+      color: white;
+      border-color: #7a1a1a;
+      box-shadow: 0 0 8px rgba(168, 40, 40, 0.5);
+    }
+
+    .q-number-btn.not-visited {
+      background: #f0f0f5;
+      color: #777;
+      border-color: #b0b8c5;
+      border-style: dashed;
+    }
+
+    .q-number-btn.visited-unanswered {
+      background: #e8f0fa;
+      color: #2b5fa0;
+      border-color: #5a9cf0;
+      border-style: solid;
+    }
+
+    .legend {
+      margin-top: 1.2rem;
+      font-size: 0.73rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: center;
+      background: #e8eef8;
+      padding: 0.7rem;
+      border-radius: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex-basis: 45%;
+    }
+
+    .legend-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      flex-shrink: 0;
+    }
+
+    .stats-summary {
+      text-align: center;
+      margin-top: 0.8rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #0d2137;
+      background: #fff;
+      padding: 0.5rem;
+      border-radius: 10px;
+    }
+
+    /* RIGHT PANEL - Question Display */
+    .question-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      background: #f8fafd;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #dce5f2;
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      color: #0d2137;
+      margin-bottom: 1.2rem;
+    }
+
+    .question-badge {
+      background: #0d2137;
+      color: #c8ddf8;
+      padding: 0.3rem 1.5rem;
+      border-radius: 30px;
+      font-size: 0.95rem;
+    }
+
+    .question-type-badge {
+      background: #3b7dd8;
+      color: white;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .question-area {
+      background: #eef3fb;
+      border-radius: 20px;
+      padding: 1.5rem;
+      border-left: 8px solid #3b7dd8;
+      margin-bottom: 1.2rem;
+    }
+
+    .question-text {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #0d2137;
+      line-height: 1.4;
+    }
+
+    .already-answered-banner {
+      background: #d4e4fa;
+      border: 1px solid #3b7dd8;
+      color: #1a3a5c;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      border: 2px solid #b8cbe0;
+      border-radius: 14px;
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-row:hover:not(.disabled-option) {
+      background: #e8f0fa;
+      border-color: #3b7dd8;
+    }
+
+    .option-letter {
+      font-weight: 800;
+      font-size: 1.2rem;
+      background: #c8d8f0;
+      color: #0d2137;
+      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .option-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a2a3a;
+      flex: 1;
+    }
+
+    .selected-correct {
+      background: #d4edda;
+      border: 2px solid #1b6b2e;
+    }
+    .selected-correct .option-letter {
+      background: #1b6b2e;
+      color: white;
+    }
+
+    .selected-wrong {
+      background: #fddddd;
+      border: 2px solid #a82828;
+    }
+    .selected-wrong .option-letter {
+      background: #a82828;
+      color: white;
+    }
+
+    .disabled-option {
+      opacity: 0.85;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .open-ended-area {
+      margin-top: 0.5rem;
+    }
+
+    .open-ended-textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #b8cbe0;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 80px;
+      background: white;
+    }
+
+    .open-ended-textarea:disabled {
+      background: #e8eef8;
+      cursor: not-allowed;
+    }
+
+    .bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: auto;
+    }
+
+    .feedback-badge {
+      font-weight: 600;
+      color: #0d2137;
+      background: #dce5f2;
+      padding: 0.4rem 1.5rem;
+      border-radius: 24px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .nav-btn {
+      background: #3b7dd8;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 0 #1e4d8c;
+      border: 1px solid #5a9cf0;
+    }
+
+    .nav-btn:hover {
+      background: #5a9cf0;
+      box-shadow: 0 2px 0 #1e4d8c;
+      transform: translateY(2px);
+    }
+
+    .submit-btn {
+      background: #0d2137;
+      color: #c8ddf8;
+      border: none;
+      padding: 0.7rem 1.8rem;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 0 #060f1a;
+    }
+
+    .submit-btn:hover {
+      background: #15395a;
+    }
+
+    .result-screen {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .score-circle {
+      font-size: 4rem;
+      font-weight: 800;
+      color: #3b7dd8;
+      background: #0d2137;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1rem auto;
+      box-shadow: 0 0 25px #3b7dd8;
+    }
+
+    .restart-btn {
+      background: #15395a;
+      color: #c8ddf8;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 40px;
+      font-weight: bold;
+      margin-top: 1.5rem;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .restart-btn:hover {
+      background: #1e4d8c;
+    }
+
+    .review-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .review-table th, .review-table td {
+      border: 1px solid #b8cbe0;
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    .review-table th {
+      background: #0d2137;
+      color: #c8ddf8;
+    }
+
+    @media (max-width: 768px) {
+      .main-layout {
+        flex-direction: column;
+      }
+      .question-nav {
+        width: 100%;
+        min-width: 100%;
+        max-height: 200px;
+        flex-shrink: 0;
+      }
+      .question-grid {
+        grid-template-columns: repeat(10, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="cbt-container" id="quizApp">
+  <div class="church-header">
+    <div class="church-badge">📚 SUNDAY SCHOOL DEPARTMENT</div>
+    <h1>VBC OLUWATEDO · BIBLE QUIZ</h1>
+    <div class="book-reference">📖 42 Questions — No Timer</div>
+  </div>
+
+  <div class="main-layout">
+    <!-- LEFT NAVIGATION PANEL -->
+    <div class="question-nav" id="questionNav">
+      <div class="nav-header">📋 QUESTION PALETTE</div>
+      <div class="question-grid" id="questionGrid"></div>
+      <div class="stats-summary" id="statsSummary">
+        Answered: <span id="answeredCount">0</span> | Unanswered: <span id="unansweredCount">42</span> | Not Visited: <span id="notVisitedCount">42</span>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-box" style="background:#0d2137; animation: pulse 1.5s infinite;"></div> Current</div>
+        <div class="legend-item"><div class="legend-box" style="background:#1b6b2e;"></div> Correct</div>
+        <div class="legend-item"><div class="legend-box" style="background:#a82828;"></div> Wrong</div>
+        <div class="legend-item"><div class="legend-box" style="background:#e8f0fa; border:2px solid #5a9cf0;"></div> Visited (Unanswered)</div>
+        <div class="legend-item"><div class="legend-box" style="background:#f0f0f5; border:2px dashed #b0b8c5;"></div> Not Visited</div>
+      </div>
+    </div>
+
+    <!-- RIGHT QUESTION PANEL -->
+    <div class="question-panel" id="dynamicContent">
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- 42 QUESTIONS WITH ANSWER KEYS ----------
+    const questions = [
+      { 
+        text: "\"This is the message we have heard from him and declared to you: God is light; in him there is no darkness,\" Where can this be found in Scriptures?", 
+        options: ["John 6 vs 8", "1st John 1 vs 5", "1st John 2 vs 1", "2nd John 3 vs 2"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "According to 1st John 1 vs 8, we are liars if we", 
+        options: ["say we are good", "say we are sinless", "say we are honest", "say we are kind"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "According to 1st John 2 vs 1, Jesus was referred to as our", 
+        options: ["Sacrificial lamb", "Man of war", "Advocate", "Prince of peace"], 
+        correct: 2, type: "mcq" 
+      },
+      { 
+        text: "The topic of the Second Sunday School in this year is", 
+        options: ["Sin", "Repentance of faith", "Remission of sin", "Prayer"], 
+        correct: null, type: "mcq" 
+      },
+      { 
+        text: "The story of the prodigal son is found in", 
+        options: ["Luke 15", "John 15", "Luke 12", "Mathew 15"], 
+        correct: 0, type: "mcq" 
+      },
+      { 
+        text: "What experience humbled the prodigal son and brought him back to his senses?", 
+        options: ["He was forced to eat a stranger's food", "He was forced to pigs' food", "He was arrested", "He was insulted"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "Mention one lesson to learn from the story of the prodigal son", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "According to Genesis 18, how many times did Abraham plead with God to reduce the number of righteous people required to spare the land?", 
+        options: ["2 times", "10 times", "7 times", "5 times"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "The ultimate demand of Jesus for those who profess to love him according to John 21 vs 17 is to", 
+        options: ["Attend church regularly", "Feed His sheep", "Carry bigger bibles", "Fast more often"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "Recite any memory verse from the Sunday School lessons in January.", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "For the grace beyond borders Sunday school lesson, who was the study character?", 
+        options: ["Apostle Paul", "Brother Saul", "Prophet John", "Prophet Jonah"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "Describe briefly how Jonah got to Nineveh mentioning the place(s) visited and mode of transportation.", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "Why did Apostle Paul not get help from the Thessalonian church?", 
+        options: ["He lacked the right to receive help", "He trivialises the previous help received", "He taught them hard teachings", "He wanted to set an example to be followed by them"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "Working diligently helps believers ---- and", 
+        options: ["Have money and good self esteem", "Prove their discipline and commitment", "Establish God's commandment and have resources help others", "Fulfil God's purposes and set an example for others"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "The statement \"HE THAT DOES NOT WORK SHOULD NOT EAT\" was made by who and in which Sunday school topic did we come across it?", 
+        options: ["Paul and a well earned rest", "Saul and a good day's work", "The apostles and a well earned rest", "Paul and a good day's work"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "In a well earned rest, what Bible ordinance was the central theme?", 
+        options: ["The promised rest and sleep", "The day of the lord and prayers", "The Sabbath and fasting", "The sacred service and prayer"], 
+        correct: 2, type: "mcq" 
+      },
+      { 
+        text: "In cultivating generosity what category of people was God particular about to be remembered for kindness?", 
+        options: ["The needy and helpless", "The window and vulnerable", "The poor and foreigners", "The widowers and fatherless"], 
+        correct: 2, type: "mcq" 
+      },
+      { 
+        text: "The lesson scripture for \"Provoke one another\" class encourages that we provoke into --- and ---", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "Recite Hebrews 10:24", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "State any of the Sunday school topics for the month of May", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "According to Deuteronomy 24:14-15 used for the cultivating generosity Sunday school topic, what must not happen before the hired servant is paid?", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "What categories of people in society does Deuteronomy 24:17-21 term as the vulnerable?", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "Mention the three principles of love under the topic \"Love Acts.\"", 
+        options: ["Accepting imperfections, humility, and cultivating empathy", "Accepting imperfections, patience, and cultivating empathy", "Accepting imperfections, practicing forgiveness, and cultivating empathy", "Patience, forgiveness, and cultivating empathy"], 
+        correct: 2, type: "mcq" 
+      },
+      { 
+        text: "Quote verbatim the summary of the most important commandment.", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "_______ is made perfect in love.", 
+        options: ["God", "Faith", "Christianity", "Disciples"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "In which book and chapter of the Bible can this verse be found? \"What good is it, my brothers and sisters, if someone claims to have faith but has no deeds? Can such faith save them?\"", 
+        options: ["James 2:14", "James 3:14", "James 14:2", "James 14:3"], 
+        correct: 0, type: "mcq" 
+      },
+      { 
+        text: "Mention three topics out of the five topics considered in the month of April.", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "Physical training is of ______ value, but godliness has ______ for all things.", 
+        options: ["Greater and value", "Some and value", "Measured and value", "Noticeable and value"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "Mention the name of the chief official assigned for the training of Daniel and others in Babylon.", 
+        options: ["Mishael", "Ashpenaz", "Shadrach", "Azariah"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "What is the golden text for the topic \"Giving Generously\"?", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "God ordained every ______ year for the cancellation of debts among the Israelites.", 
+        options: ["Third", "Sixth", "Fourth", "Seventh"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "According to Acts chapter 17, complete this statement: \"In God we live and move and have our ______\"", 
+        options: ["Move and stayed", "Move and being", "Move and confidence", "Move and promise"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "_______ is the firstfruits of those who have fallen asleep.", 
+        options: ["Christ", "Lazarus", "Melchizedek", "Holy Spirit"], 
+        correct: 0, type: "mcq" 
+      },
+      { 
+        text: "_______ and _______ of Christ are the essence of Christianity.", 
+        options: ["Redemption and resurrection", "Salvation and eternity", "Faith and resurrection", "Death and resurrection"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "Who was Caesar in the Bible?", 
+        options: ["The king", "The high priest", "A soldier", "The Roman emperor"], 
+        correct: 3, type: "mcq" 
+      },
+      { 
+        text: "Is Caesar a name or a title?", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "Recite the golden text under the topic \"The Child in a Christian World.\"", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "The commandments are to be tied as symbols on your ______ and bound on your ______, and they are to be written on the ______ of your house and on your ______.", 
+        options: ["Hands, foreheads, doorframes, and gates", "Neck, hands, forehead, and doorframe", "Neck, hands, gates, and doorframe", "Hands, neck, doorframe, and gates"], 
+        correct: 0, type: "mcq" 
+      },
+      { 
+        text: "According to Romans 13:8, there is a debt that always remains outstanding for every believer.", 
+        options: [], 
+        correct: null, type: "open" 
+      },
+      { 
+        text: "In which book of the Bible can this statement be found? \"Death has been swallowed up in victory.\"", 
+        options: ["2 Corinthians", "1 Corinthians", "Romans", "Revelation"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "Complete this passage of Scripture: \"The ______ of ______ is sin, and the power of ______ is the law.\"", 
+        options: ["Power, law, and death", "Sting, death, and sin", "Power, law, and sin", "Sting, power, and sin"], 
+        correct: 1, type: "mcq" 
+      },
+      { 
+        text: "Complete this passage of Scripture: \"If Christ has not been ______, your ______ is futile; you are still in your ______.\"", 
+        options: ["Raised, faith, and sins", "Raised, faith, and sin", "Raised, salvation, and sins", "Raised, salvation, and sin"], 
+        correct: 0, type: "mcq" 
+      }
+    ];
+
+    const TOTAL_QUESTIONS = questions.length;
+    const optionLetters = ['A', 'B', 'C', 'D'];
+
+    let currentIndex = 0;
+    let score = 0;
+    let userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
+    let visitedQuestions = new Array(TOTAL_QUESTIONS).fill(false);
+    let quizCompleted = false;
+
+    const dynamicContent = document.getElementById('dynamicContent');
+    const questionGrid = document.getElementById('questionGrid');
+
+    function calculateScore() {
+      let correct = 0;
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        if (questions[i].type === 'mcq' && userAnswers[i] !== null && userAnswers[i] === questions[i].correct) {
+          correct++;
+        }
+      }
+      return correct;
+    }
+
+    function getAnsweredCount() {
+      let count = 0;
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        if (questions[i].type === 'mcq' && userAnswers[i] !== null) count++;
+        if (questions[i].type === 'open' && userAnswers[i] !== null && userAnswers[i].trim() !== '') count++;
+      }
+      return count;
+    }
+
+    function getUnansweredCount() {
+      return TOTAL_QUESTIONS - getAnsweredCount();
+    }
+
+    function getNotVisitedCount() {
+      let count = 0;
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        if (!visitedQuestions[i]) count++;
+      }
+      return count;
+    }
+
+    function updateStatsSummary() {
+      document.getElementById('answeredCount').textContent = getAnsweredCount();
+      document.getElementById('unansweredCount').textContent = getUnansweredCount();
+      document.getElementById('notVisitedCount').textContent = getNotVisitedCount();
+    }
+
+    function showResultScreen() {
+      quizCompleted = true;
+      score = calculateScore();
+      
+      let reviewHtml = '<table class="review-table"><tr><th>Q#</th><th>Type</th><th>Status</th><th>Your Answer</th><th>Correct Answer</th></tr>';
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const q = questions[i];
+        let status = '';
+        let userAns = '—';
+        
+        if (q.type === 'mcq') {
+          if (userAnswers[i] === null) {
+            if (visitedQuestions[i]) {
+              status = '👁️ Visited (No Answer)';
+            } else {
+              status = '❌ Not Visited';
+            }
+          } else if (userAnswers[i] === q.correct) {
+            status = '✅ Correct';
+            userAns = optionLetters[userAnswers[i]] + '. ' + q.options[userAnswers[i]];
+          } else {
+            status = '❌ Wrong';
+            userAns = optionLetters[userAnswers[i]] + '. ' + q.options[userAnswers[i]];
+          }
+        } else {
+          if (userAnswers[i] !== null && userAnswers[i].trim() !== '') {
+            status = '📝 Answered';
+            userAns = userAnswers[i].substring(0, 50) + '...';
+          } else if (visitedQuestions[i]) {
+            status = '👁️ Visited (No Answer)';
+          } else {
+            status = '❌ Not Visited';
+          }
+        }
+        
+        const correctAns = q.type === 'mcq' ? (q.correct !== null ? optionLetters[q.correct] + '. ' + q.options[q.correct] : '—') : 'Open-ended';
+        
+        reviewHtml += `<tr>
+          <td>${i + 1}</td>
+          <td>${q.type === 'mcq' ? 'MCQ' : 'Open'}</td>
+          <td>${status}</td>
+          <td>${userAns}</td>
+          <td>${correctAns}</td>
+        </tr>`;
+      }
+      reviewHtml += '</table>';
+
+      dynamicContent.innerHTML = `
+        <div class="result-screen">
+          <h2 style="color:#0d2137; font-size:2rem;">📋 Quiz Completed!</h2>
+          <div class="score-circle">${score}/${TOTAL_QUESTIONS}</div>
+          <p style="font-size:1.1rem; color:#15395a; font-weight:600;">MCQ Score (Open-ended not scored automatically)</p>
+          <p style="font-size:1.2rem; color:#0d2137; font-weight:600;">Sunday School Department - VBC Oluwatedo</p>
+          <div style="max-height: 300px; overflow-y: auto; margin: 1rem 0;">
+            ${reviewHtml}
+          </div>
+          <button class="restart-btn" id="restartQuizBtn">🔄 Restart Quiz</button>
+        </div>
+      `;
+      document.getElementById('restartQuizBtn').addEventListener('click', restartQuiz);
+      renderQuestionGrid();
+      updateStatsSummary();
+    }
+
+    function navigateToQuestion(index) {
+      if (quizCompleted) return;
+      
+      visitedQuestions[currentIndex] = true;
+      currentIndex = index;
+      visitedQuestions[index] = true;
+      
+      renderQuestion(currentIndex);
+      renderQuestionGrid();
+      updateStatsSummary();
+    }
+
+    function handleOptionSelect(selectedIdx) {
+      if (quizCompleted) return;
+      if (questions[currentIndex].type !== 'mcq') return;
+      if (userAnswers[currentIndex] !== null) return;
+
+      userAnswers[currentIndex] = selectedIdx;
+      visitedQuestions[currentIndex] = true;
+
+      renderQuestion(currentIndex);
+      renderQuestionGrid();
+      updateStatsSummary();
+    }
+
+    function handleOpenEndedSave(text) {
+      if (quizCompleted) return;
+      userAnswers[currentIndex] = text;
+      visitedQuestions[currentIndex] = true;
+      updateStatsSummary();
+      renderQuestionGrid();
+    }
+
+    function renderQuestionGrid() {
+      let gridHtml = '';
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        let btnClass = 'q-number-btn';
+        
+        if (i === currentIndex && !quizCompleted) {
+          btnClass += ' current';
+        } else if (questions[i].type === 'mcq' && userAnswers[i] !== null) {
+          if (userAnswers[i] === questions[i].correct) {
+            btnClass += ' answered-correct';
+          } else {
+            btnClass += ' answered-wrong';
+          }
+        } else if (questions[i].type === 'open' && userAnswers[i] !== null && userAnswers[i].trim() !== '') {
+          btnClass += ' answered-correct';
+        } else if (visitedQuestions[i]) {
+          btnClass += ' visited-unanswered';
+        } else {
+          btnClass += ' not-visited';
+        }
+        
+        gridHtml += `<div class="${btnClass}" data-index="${i}" title="Question ${i + 1}">${i + 1}</div>`;
+      }
+      questionGrid.innerHTML = gridHtml;
+
+      document.querySelectorAll('#questionGrid .q-number-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          if (index !== currentIndex && !quizCompleted) {
+            navigateToQuestion(index);
+          }
+        });
+      });
+    }
+
+    function renderQuestion(index) {
+      if (quizCompleted) return;
+      const q = questions[index];
+      const questionNumber = index + 1;
+      const isAnswered = q.type === 'mcq' ? (userAnswers[index] !== null) : (userAnswers[index] !== null && userAnswers[index].trim() !== '');
+
+      let bannerHtml = '';
+      if (isAnswered) {
+        bannerHtml = '<div class="already-answered-banner">📝 This question has been answered. You can review but not change your answer.</div>';
+      }
+
+      let answerAreaHtml = '';
+      if (q.type === 'mcq') {
+        let optionsHtml = '';
+        q.options.forEach((opt, idx) => {
+          let rowClass = 'option-row';
+          if (isAnswered) {
+            if (idx === q.correct) {
+              rowClass += ' selected-correct';
+            } else if (userAnswers[index] === idx && idx !== q.correct) {
+              rowClass += ' selected-wrong';
+            } else {
+              rowClass += ' disabled-option';
+            }
+          }
+          optionsHtml += `
+            <div class="${rowClass}" data-option-index="${idx}">
+              <div class="option-letter">${optionLetters[idx]}</div>
+              <div class="option-text">${opt}</div>
+            </div>
+          `;
+        });
+        answerAreaHtml = `<div class="options-list" id="optionsContainer">${optionsHtml}</div>`;
+      } else {
+        answerAreaHtml = `
+          <div class="open-ended-area">
+            <textarea class="open-ended-textarea" id="openEndedInput" placeholder="Type your answer here..." ${isAnswered ? 'disabled' : ''}>${userAnswers[index] || ''}</textarea>
+            ${!isAnswered ? '<button class="nav-btn" id="saveOpenBtn" style="margin-top:0.5rem;">💾 Save Answer</button>' : ''}
+          </div>
+        `;
+      }
+
+      const html = `
+        <div class="status-row">
+          <span class="question-badge">Question ${questionNumber} of ${TOTAL_QUESTIONS}</span>
+          <span class="question-type-badge">${q.type === 'mcq' ? '📝 Multiple Choice' : '✍️ Open-Ended'}</span>
+        </div>
+        ${bannerHtml}
+        <div class="question-area">
+          <div class="question-text">${q.text}</div>
+        </div>
+        ${answerAreaHtml}
+        <div class="bottom-row">
+          <div class="feedback-badge" id="feedbackMsg">
+            ${isAnswered ? '✅ Answer recorded' : (q.type === 'mcq' ? 'Select your answer (A-D)' : 'Type your answer below')}
+          </div>
+          <div class="nav-buttons">
+            ${index > 0 ? `<button class="nav-btn" id="prevBtn">← Previous</button>` : ''}
+            ${index < TOTAL_QUESTIONS - 1 ? `<button class="nav-btn" id="nextBtn">Next →</button>` : ''}
+            <button class="submit-btn" id="submitQuizBtn">Submit Quiz</button>
+          </div>
+        </div>
+      `;
+
+      dynamicContent.innerHTML = html;
+
+      // MCQ handlers
+      if (q.type === 'mcq' && !isAnswered) {
+        const optionRows = document.querySelectorAll('#optionsContainer .option-row');
+        optionRows.forEach(row => {
+          row.addEventListener('click', function() {
+            const optionIndex = parseInt(this.getAttribute('data-option-index'));
+            handleOptionSelect(optionIndex);
+          });
+        });
+      }
+
+      // Open-ended handlers
+      if (q.type === 'open' && !isAnswered) {
+        const saveBtn = document.getElementById('saveOpenBtn');
+        const textarea = document.getElementById('openEndedInput');
+        if (saveBtn && textarea) {
+          saveBtn.addEventListener('click', function() {
+            handleOpenEndedSave(textarea.value);
+            renderQuestion(index);
+            renderQuestionGrid();
+          });
+        }
+      }
+
+      // Navigation
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitQuizBtn');
+
+      if (prevBtn) prevBtn.addEventListener('click', () => navigateToQuestion(index - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => navigateToQuestion(index + 1));
+      if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+          const unansweredCount = getUnansweredCount();
+          const notVisitedCount = getNotVisitedCount();
+          let message = 'Are you sure you want to submit your quiz?\n\n';
+          message += `Answered: ${getAnsweredCount()}/${TOTAL_QUESTIONS}\n`;
+          message += `Unanswered: ${unansweredCount}\n`;
+          message += `Not Visited: ${notVisitedCount}\n\n`;
+          if (unansweredCount > 0 || notVisitedCount > 0) {
+            message += '⚠️ You still have unanswered questions!';
+          }
+          if (confirm(message)) {
+            showResultScreen();
+          }
+        });
+      }
+    }
+
+    function restartQuiz() {
+      currentIndex = 0;
+      score = 0;
+      userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
+      visitedQuestions = new Array(TOTAL_QUESTIONS).fill(false);
+      quizCompleted = false;
+      
+      visitedQuestions[0] = true;
+      
+      renderQuestionGrid();
+      renderQuestion(0);
+      updateStatsSummary();
+    }
+
+    // Initialize
+    visitedQuestions[0] = true;
+    renderQuestionGrid();
+    renderQuestion(0);
+    updateStatsSummary();
+  })();
+</script>
+</body>
+</html>
